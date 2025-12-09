@@ -43,6 +43,13 @@ class _MechanicRecommendationScreenState
     'Motorcycle',
     'Truck',
   ];
+  
+  // Mechanic type filter (Registered vs General)
+  String selectedMechanicType = 'General Mechanics';
+  final List<String> mechanicTypeFilters = [
+    'Registered Mechanics',
+    'General Mechanics',
+  ];
   final List<_RadiusOption> _radiusOptions = const [
     _RadiusOption(label: '1 km', filterKm: 1, fetchKm: 2),
     _RadiusOption(label: '3 km', filterKm: 3, fetchKm: 5),
@@ -226,8 +233,19 @@ class _MechanicRecommendationScreenState
       return mechanic.copyWith(price: priceStr);
     }).toList();
 
+    // Apply mechanic type filter first
+    List<Mechanic> typeFiltered = updatedMechanics;
+    if (selectedMechanicType == 'Registered Mechanics') {
+      // Show only registered mechanics (IDs starting with 'reg_')
+      typeFiltered = updatedMechanics.where((mechanic) => mechanic.id.startsWith('reg_')).toList();
+    } else if (selectedMechanicType == 'General Mechanics') {
+      // Show both Google Map mechanics AND registered mechanics
+      // (No filtering needed, show all)
+      typeFiltered = updatedMechanics;
+    }
+
     final List<Mechanic> radiusScoped =
-        updatedMechanics.where((mechanic) {
+        typeFiltered.where((mechanic) {
             if (_selectedRadiusKm <= 0) return true;
             return mechanic.distanceKm <= _selectedRadiusKm;
           }).toList()
@@ -1282,7 +1300,64 @@ class _MechanicRecommendationScreenState
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: Container(), // Empty container for spacing
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Mechanic Type',
+                              style: TextStyle(
+                                color: Colors.grey[300],
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            DropdownButtonFormField<String>(
+                              value: selectedMechanicType,
+                              dropdownColor: Colors.grey[850],
+                              iconEnabledColor: Colors.white,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey[800],
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: _accentColor.withOpacity(0.3),
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[600]!,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: _accentColor),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                              ),
+                              items: mechanicTypeFilters
+                                  .map(
+                                    (type) => DropdownMenuItem<String>(
+                                      value: type,
+                                      child: Text(type),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (type) {
+                                if (type == null) return;
+                                setState(() {
+                                  selectedMechanicType = type;
+                                });
+                                _applyFilter();
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
