@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "698591410517",
+    "project_id": "tuneup-3229c",
+    "storage_bucket": "tuneup-3229c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:698591410517:android:a1f1a965b622a888be17dc",
+        "android_client_info": {
+          "package_name": "com.example.test_drive"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrB5frIrG8_GPTZzkhLrw6qUQP3aDY6yU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
